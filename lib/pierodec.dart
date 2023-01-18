@@ -128,7 +128,7 @@ class _PreiodicState extends State<Preiodic> {
                 child: (StreamBuilder(
                         stream: getSm(),
                         builder: (context, AsyncSnapshot snapshot) {
-                          if (snapshot.hasData) {
+                          if (snapshot.hasData && snapshot.data != null) {
                             return ListView.builder(
                                 itemCount: 700,
                                 itemBuilder: ((context, index) {
@@ -173,7 +173,7 @@ class _PreiodicState extends State<Preiodic> {
                 child: (StreamBuilder(
                     stream: getTempe(),
                     builder: (context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
+                      if (snapshot.hasData && snapshot.data != null) {
                         return ListView.builder(
                             itemCount: 700,
                             itemBuilder: ((context, index) {
@@ -205,7 +205,7 @@ class _PreiodicState extends State<Preiodic> {
                   child: (StreamBuilder(
                       stream: getHum(),
                       builder: (context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
+                        if (snapshot.hasData && snapshot.data != null) {
                           return ListView.builder(
                               itemCount: 700,
                               itemBuilder: ((context, index) {

@@ -1,5 +1,6 @@
 // ignore_for_file: implementation_imports, unnecessary_import, sort_child_properties_last, unused_local_variable, must_be_immutable
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:fire_app/crud.dart';
 import 'package:fire_app/humidtylist.dart';
 import 'package:fire_app/login.dart';
@@ -13,24 +14,32 @@ import 'package:provider/provider.dart';
 
 import 'linkapi.dart';
 
-class HomePage extends StatelessWidget with Crud {
+class HomePage extends StatefulWidget with Crud {
+  HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   // const HomePage({super.key});
   final GlobalKey<FormState> _LoginformKey = GlobalKey();
 
   // TextEditingController temp = TextEditingController();
-
-  // getTemp() async {
-  //   var response = await getTemp(linkTemp, {"id": sharedPref.getString("id ")});
-  // }
   final Crud _crud = Crud();
+
   List temp = [1];
+
   List last_detection = [0];
+
   int last_dec = 0;
 
-  HomePage({super.key});
+  num lastTemp = 0;
+
   Future getTemperautre() async {
     var response = await _crud
         .postRequest(linkTempLast, {"id": sharedPref.getString("id")});
+
     // var responsebody = jsonDecode(response.body);
     return response;
   }
@@ -39,8 +48,8 @@ class HomePage extends StatelessWidget with Crud {
       .asyncMap((event) => getTemperautre());
 
   Future getHumidty() async {
-    var response =
-        await postRequest(linkHumidtyLast, {"id": sharedPref.getString("id")});
+    var response = await _crud
+        .postRequest(linkHumidtyLast, {"id": sharedPref.getString("id")});
     return response;
   }
 
@@ -60,9 +69,19 @@ class HomePage extends StatelessWidget with Crud {
 
   @override
   Widget build(BuildContext context) {
-    var temps = [34, 55, 33, 34, 40];
+    // var temps = [34, 55, 33, 34, 40];
     //var temps = getTemperautre();
-    var lastItem = temps.length - 1;
+    // var lastItem = temps.length - 1;
+    // setState(() {
+    //   if (temp[0] > 35) {
+    //     AwesomeDialog(
+    //             context: context,
+    //             btnCancel: Text("cances"),
+    //             title: "worning",
+    //             body: Text("temp is hitgh"))
+    //         .show();
+    //   }
+    // });
     //var temps;
     return Scaffold(
       appBar: AppBar(
@@ -176,6 +195,32 @@ class HomePage extends StatelessWidget with Crud {
                                         if (snapshot.hasData) {
                                           temp.add(snapshot.data['temperature']
                                               [0]['temp']);
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback(
+                                            (timeStamp) {
+                                              final temp =
+                                                  snapshot.data['temperature']
+                                                      [0]['temp'];
+                                              if (temp > 30 &&
+                                                  temp != lastTemp) {
+                                                lastTemp = temp;
+                                                AwesomeDialog(
+                                                        context: context,
+                                                        btnCancel: TextButton(
+                                                          child: Text("cansel"),
+                                                          onPressed:
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop,
+                                                        ),
+                                                        title: "wornning",
+                                                        body: Text(
+                                                            "temp is hight"))
+                                                    .show();
+                                              }
+                                            },
+                                          );
+
                                           return ListView.builder(
                                               itemCount: snapshot
                                                   .data['temperature'].length,
@@ -185,6 +230,7 @@ class HomePage extends StatelessWidget with Crud {
                                               itemBuilder: (context, index) {
                                                 return Text(
                                                     "${snapshot.data['temperature'][index]['temp']}c");
+
                                                 //"${snapshot.data['humidty'][index]['humidty']}");
                                               });
 
@@ -370,12 +416,16 @@ class HomePage extends StatelessWidget with Crud {
                           // "${snapshot.data['temperature'][index]['temp']}");
                           return Column(
                             children: [
-                              const Text("not detect"),
+                              //const Text("not detect"),
+                              last_dec == 0
+                                  ? Text("not detect")
+                                  : Text("detect"),
                               CircleAvatar(
                                 backgroundColor:
                                     last_dec == 0 ? Colors.green : Colors.red,
                                 radius: MediaQuery.of(context).size.height / 20,
-                                child: last_dec == "not detect"
+                                child: last_dec == 0
+                                    //last_dec == "not detect"
                                     ? const Icon(
                                         Icons.done,
                                         color: Colors.white,

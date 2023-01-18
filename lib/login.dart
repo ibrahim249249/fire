@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, implementation_imports, unnecessary_import, no_leading_underscores_for_local_identifiers, non_constant_identifier_names, avoid_print, unused_local_variable, override_on_non_overriding_member, prefer_typing_uninitialized_variables
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:fire_app/crud.dart';
 import 'package:fire_app/linkapi.dart';
 import 'package:fire_app/main.dart';
@@ -7,7 +8,6 @@ import 'package:fire_app/main_minu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 
 // ignore: unused_import
 
@@ -48,12 +48,12 @@ class _LoginPageState extends State<LoginPage> {
 
       } else {
         AwesomeDialog(
-            context: context,
-            btnCancel: Text("Cancel"),
-            title: "worning",
-            body: Text(
-                "the email or the password is wrong or the acount is not exist"))
-          .show();
+                context: context,
+                btnCancel: Text("Cancel"),
+                title: "worning",
+                body: Text(
+                    "the email or the password is wrong or the acount is not exist"))
+            .show();
       }
     }
   }
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
             height: double.infinity,
             decoration: BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('lib/Security-Alarm-System (1).jpg'),
+                  image: AssetImage('assets/Security-Alarm-System (1).jpg'),
                   fit: BoxFit.cover),
             ),
             child: isLoading == true
