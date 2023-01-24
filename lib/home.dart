@@ -29,12 +29,16 @@ class _HomePageState extends State<HomePage> {
   final Crud _crud = Crud();
 
   List temp = [1];
+  List hum = [1];
+  List smo = [1];
 
   List last_detection = [0];
 
   int last_dec = 0;
 
   num lastTemp = 0;
+  num lastHum = 0;
+  num lastsmok = 0;
 
   Future getTemperautre() async {
     var response = await _crud
@@ -350,6 +354,28 @@ class _HomePageState extends State<HomePage> {
                                   stream: getHum(),
                                   builder: (context, AsyncSnapshot snapshot) {
                                     if (snapshot.hasData) {
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback(
+                                        (timeStamp) {
+                                          final hum = snapshot.data['humidty']
+                                              [0]['humidty'];
+                                          if (hum > 30 && hum != lastHum) {
+                                            lastHum = hum;
+                                            AwesomeDialog(
+                                                    context: context,
+                                                    btnCancel: TextButton(
+                                                      child: Text("cansel"),
+                                                      onPressed:
+                                                          Navigator.of(context)
+                                                              .pop,
+                                                    ),
+                                                    title: " humidty wornning",
+                                                    body: Text(
+                                                        "humidty is hight"))
+                                                .show();
+                                          }
+                                        },
+                                      );
                                       return Text(
                                           "${snapshot.data['humidty'][0]['humidty']}c");
                                       // "${snapshot.data['temperature'][index]['temp']}");

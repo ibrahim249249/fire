@@ -212,8 +212,11 @@ class _PreiodicState extends State<Preiodic> {
                                 return Card(
                                   child: ListTile(
                                     leading: FlutterLogo(),
-                                    title: Text(
-                                        "value : ${snapshot.data['humidty'][0]['humidty']}"),
+                                    title: snapshot.connectionState ==
+                                            ConnectionState.waiting
+                                        ? Center(child: Text("loding...."))
+                                        : Text(
+                                            "value : ${snapshot.data['humidty'][0]['humidty']}"),
                                     subtitle: Text(
                                         " Date and time : ${snapshot.data['humidty'][0]['dateTime']}"),
                                   ),
