@@ -4,28 +4,29 @@ import 'crud.dart';
 import 'linkapi.dart';
 import 'main.dart';
 
-class HumidtyList extends StatefulWidget {
-  const HumidtyList({super.key});
+class SmokeList extends StatefulWidget {
+  const SmokeList({super.key});
 
   @override
-  State<HumidtyList> createState() => _HumidtyListState();
+  State<SmokeList> createState() => _SmokeListState();
 }
 
-class _HumidtyListState extends State<HumidtyList> with Crud {
-  Future getHumidty() async {
+class _SmokeListState extends State<SmokeList> with Crud {
+  final Crud _crud = Crud();
+  Future getSmoke() async {
     var response =
-        await postRequest(linkHumidty, {"id": sharedPref.getString("id")});
+        await _crud.postRequest(linkSmoke, {"id": sharedPref.getString("id")});
+    // var responsebody = jsonDecode(response.body);
     return response;
   }
 
-  Stream getHum() => Stream.periodic(const Duration(seconds: 1))
-      .asyncMap((event) => getHumidty());
-
+  Stream getSm() => Stream.periodic(const Duration(seconds: 1))
+      .asyncMap((event) => getSmoke());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(' HUMIDITY'),
+        title: const Text(' SMOKE'),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -33,7 +34,7 @@ class _HumidtyListState extends State<HumidtyList> with Crud {
           child: ListView(
             children: [
               FutureBuilder(
-                  future: getHumidty(),
+                  future: getSmoke(),
                   builder: (context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
                       return ListView.builder(
@@ -52,27 +53,31 @@ class _HumidtyListState extends State<HumidtyList> with Crud {
                                       3: FractionColumnWidth(0.5),
                                     },
                                     children: [
-                                      buildRow(['id', 'Humidity', 'DateTime'],
+                                      buildRow(['id', 'Smoke', 'DateTime'],
                                           isHeader: true),
                                       for (int i = 0;
-                                          i < snapshot.data['humidty'].length;
+                                          i < snapshot.data['smoke'].length;
                                           i++)
                                         buildRow([
                                           '${i}',
-                                          '${snapshot.data['humidty'][i]['humidty']} ',
-                                          '${snapshot.data['humidty'][i]['dateTime']} '
+                                          snapshot.data['smoke'][i]['smoke'] ==
+                                                  1
+                                              ? 'detected'
+                                              : 'not detected',
+                                          '${snapshot.data['smoke'][i]['dateTime']} '
                                         ]),
-                                      // buildRow(['Ahmed', 'usa', '20']),
-                                      // buildRow(['Ali', 'us', '23']),
                                     ],
                                   ),
                                 ),
                               ),
                             );
-
-                            // return Text(
-                            //     " humidity : ${snapshot.data['humidty'][index]['humidty']}     dateTime : ${snapshot.data['humidty'][index]['dateTime']}");
-                            //"${snapshot.data['humidty'][index]['humidty']}");
+                            // return Center(
+                            //   child: Text(snapshot.data['smoke'][index]['smoke'] ==
+                            //           0
+                            //       ? "  Not Detected   dateTime : ${snapshot.data['smoke'][index]['dateTime']}"
+                            //       : "  Detected         dateTime : ${snapshot.data['smoke'][index]['dateTime']}  "),
+                            // );
+                            //"${snapshot.data['temperature'][index]['temp']}");
                           });
                     }
                     if (snapshot.connectionState == ConnectionState.waiting) {

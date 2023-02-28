@@ -1,3 +1,4 @@
+//const linkServerName = "http://192.168.137.1/fire_app";
 const linkServerName = "http://10.0.2.2/fire_app";
 
 //auith

@@ -30,6 +30,8 @@ class _DashboardState extends State<Dashboard> {
 
   HomePage hh = HomePage();
 
+  List<int> humidty = [];
+  List<String> humidty2 = [];
   List<int> temp = [];
   List<String> temp2 = [];
   List<int> hum = [];
@@ -73,7 +75,7 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('On Monitor'),
+          title: const Text('Supervisor'),
           backgroundColor: Colors.purple,
         ),
         body: SingleChildScrollView(
@@ -85,7 +87,13 @@ class _DashboardState extends State<Dashboard> {
                 child: StreamBuilder(
                   stream: getTempe(),
                   builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Text("loding...."),
+                      );
+                    }
                     if (snapshot.hasData) {
+                      print((snapshot.data['temperature'] as List).length);
                       return ListView.builder(
                           itemCount: 1,
                           //shrinkWrap: true,
@@ -96,9 +104,7 @@ class _DashboardState extends State<Dashboard> {
                                 i++)
                               temp2.add(
                                   snapshot.data['temperature'][i]['dateTime']);
-                            // temp2.add(
-                            //   snapshot.data['temperature'][index]['dateTime'],
-                            // );
+
                             for (int i = 0;
                                 i < snapshot.data['temperature'].length;
                                 i++)
@@ -109,12 +115,12 @@ class _DashboardState extends State<Dashboard> {
                                 enable: true,
                               ),
                               primaryXAxis: CategoryAxis(),
-                              // primaryYAxis: NumericAxis(
-                              //   title: AxisTitle(
-                              //     text: 'degres',
-                              //   ),
-                              //   labelFormat: '{value} C',
-                              // ),
+                              primaryYAxis: NumericAxis(
+                                title: AxisTitle(
+                                  text: 'degres',
+                                ),
+                                labelFormat: '{value} C',
+                              ),
                               // legend: Legend(
                               //   isVisible: true,
                               // ),
@@ -139,16 +145,14 @@ class _DashboardState extends State<Dashboard> {
                                       //ChartData(x: temp2[0], y1: temp[0])
                                     ],
                                     xValueMapper: (ChartData ch, _) => ch.x,
-                                    yValueMapper: (ChartData ch, _) => ch.y1),
+                                    yValueMapper: (ChartData ch, _) => ch.y1,
+                                    dataLabelSettings:
+                                        DataLabelSettings(isVisible: true)),
                               ],
                             );
                           }));
                     }
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Text("loding...."),
-                      );
-                    }
+
                     return const Center(
                       child: Text("loding...."),
                     );
@@ -163,7 +167,13 @@ class _DashboardState extends State<Dashboard> {
                 child: StreamBuilder(
                   stream: getHum(),
                   builder: (context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: Text("loding...."),
+                      );
+                    }
                     if (snapshot.hasData) {
+                      print((snapshot.data['humidty'] as List).length);
                       return ListView.builder(
                           itemCount: 1,
                           //shrinkWrap: true,
@@ -172,58 +182,59 @@ class _DashboardState extends State<Dashboard> {
                             for (int i = 0;
                                 i < snapshot.data['humidty'].length;
                                 i++)
-                              hum2.add(snapshot.data['humidty'][i]['dateTime']);
+                              humidty2
+                                  .add(snapshot.data['humidty'][i]['dateTime']);
                             // temp2.add(
                             //   snapshot.data['temperature'][index]['dateTime'],
                             // );
                             for (int i = 0;
                                 i < snapshot.data['humidty'].length;
                                 i++)
-                              hum.add(snapshot.data['humidty'][i]['humidty']);
+                              humidty
+                                  .add(snapshot.data['humidty'][i]['humidty']);
                             return SfCartesianChart(
-                              title: ChartTitle(text: 'HUMIDTY CHART'),
+                              title: ChartTitle(text: 'HUMIDITY CHART'),
                               tooltipBehavior: TooltipBehavior(
                                 enable: true,
                               ),
                               primaryXAxis: CategoryAxis(),
-                              // primaryYAxis: NumericAxis(
-                              //   title: AxisTitle(
-                              //     text: 'degres',
-                              //   ),
-                              //   labelFormat: '{value} C',
-                              // ),
+                              primaryYAxis: NumericAxis(
+                                title: AxisTitle(
+                                  text: 'degres',
+                                ),
+                                labelFormat: '{value} C',
+                              ),
                               // legend: Legend(
                               //   isVisible: true,
                               // ),
                               series: <ChartSeries>[
-                                StackedColumnSeries<humchart, String>(
-                                    dataSource: <humchart>[
+                                StackedColumnSeries<ChartData, String>(
+                                    dataSource: <ChartData>[
                                       for (int i = 0;
                                           i < snapshot.data['humidty'].length;
                                           i++)
-                                        humchart(x: hum2[i], y1: hum[i])
-                                      // ChartData(x: temp2[0], y1: temp[0]),
-                                      // ChartData(x: temp2[1], y1: temp[1]),
-                                      // ChartData(x: temp2[2], y1: temp[2]),
-                                      // ChartData(x: temp2[3], y1: temp[3]),
-                                      // ChartData(x: temp2[4], y1: temp[4]),
-                                      // ChartData(x: temp2[5], y1: temp[5]),
-                                      // ChartData(x: temp2[6], y1: temp[6]),
+                                        ChartData(
+                                            x: humidty2[i], y1: humidty[i])
+                                      // ChartData(x: humidty2[0], y1: humidty[0]),
+                                      // ChartData(x: humidty2[1], y1: humidty[1]),
+                                      // ChartData(x: humidty2[2], y1: humidty[2]),
+                                      // ChartData(x: humidty2[3], y1: humidty[3]),
+                                      // ChartData(x: humidty2[4], y1: humidty[4]),
+                                      // ChartData(x: humidty2[5], y1: humidty[5]),
+                                      // ChartData(x: humidty2[6], y1: humidty[6]),
 
                                       //for(int i=0;i<=temp.length;i++)
                                       //ChartData(x: temp2[0], y1: temp[0])
                                     ],
-                                    xValueMapper: (humchart ch, _) => ch.x,
-                                    yValueMapper: (humchart ch, _) => ch.y1),
+                                    xValueMapper: (ChartData ch, _) => ch.x,
+                                    yValueMapper: (ChartData ch, _) => ch.y1,
+                                    dataLabelSettings:
+                                        DataLabelSettings(isVisible: true)),
                               ],
                             );
                           }));
                     }
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Text("loding...."),
-                      );
-                    }
+
                     return const Center(
                       child: Text("loding...."),
                     );
@@ -261,12 +272,12 @@ class _DashboardState extends State<Dashboard> {
                                 enable: true,
                               ),
                               primaryXAxis: CategoryAxis(),
-                              // primaryYAxis: NumericAxis(
-                              //   title: AxisTitle(
-                              //     text: 'degres',
-                              //   ),
-                              //   labelFormat: '{value} C',
-                              // ),
+                              primaryYAxis: NumericAxis(
+                                title: AxisTitle(
+                                  text: 'degres',
+                                ),
+                                labelFormat: '{value} ',
+                              ),
                               // legend: Legend(
                               //   isVisible: true,
                               // ),
@@ -289,7 +300,9 @@ class _DashboardState extends State<Dashboard> {
                                       //ChartData(x: temp2[0], y1: temp[0])
                                     ],
                                     xValueMapper: (smoChart ch, _) => ch.x,
-                                    yValueMapper: (smoChart ch, _) => ch.y1),
+                                    yValueMapper: (smoChart ch, _) => ch.y1,
+                                    dataLabelSettings:
+                                        DataLabelSettings(isVisible: true)),
                               ],
                             );
                           }));
@@ -340,89 +353,3 @@ class smoChart {
     required this.y1,
   });
 }
-// class ChartData {
-//   final String x;
-//   final int y1;
-//   final int y2;
-//   final int y3;
-//   final int y4;
-//   ChartData(this.x, this.y1, this.y2, this.y3, this.y4);
-// }
-
-// class TT {
-//   final int temp;
-//   final String date;
-//   TT(this.temp, this.date);
-// }
-
-// TempData() {
-//   List<tdata> tt = <tdata>[
-//     // HomePage().temp,
-//   ];
-// }
-
-// class tdata {
-//   int x, y;
-//   tdata(this.x, this.y);
-// }
-
-class SalesData {
-  double x, y;
-  SalesData(
-    this.x,
-    this.y,
-  );
-}
-
-dynamic getColumnData() {
-  // Crud _crud = Crud();
-  // List ylist =
-  //     await _crud.postRequest(linkTemp, {"id": sharedPref.getString("id")});
-  // List x = [10, 20, 30, 40];
-
-  // Future getTemperautre() async {
-  //   var mylist =
-  //       await _crud.postRequest(linkTemp, {"id": sharedPref.getString("id")});
-  //   // var responsebody = jsonDecode(response.body);
-  //   return mylist;
-  // }
-
-//   List<SalesData> columnData = <SalesData>[
-//     for (int i = 0; i <= 4; i++) SalesData(ylist[i], x[i]),
-//   ];
-//   return columnData;
-// }
-  List<SalesData> columnData = <SalesData>[
-    SalesData(5, 35),
-    SalesData(10, 33),
-    SalesData(15, 50),
-    SalesData(20, 30),
-  ];
-  return columnData;
-}
-
-// dynamic getHugeData() {
-//   List<SalesData> hugeData = <SalesData>[];
-//   double value = 35;
-//   Random rand = new Random();
-
-//   for (int i = 0; i < 60; i++) {
-//     if (rand.nextDouble() > 0.5)
-//       value += rand.nextDouble();
-//     else
-//       value -= rand.nextDouble();
-
-//     hugeData.add(SalesData(i.toDouble(), value));
-//   }
-//   return hugeData;
-// }
-
-// ignore: camel_case_types
-// class Task {
-//   String task;
-//   String taskValue;
-//   Color colorValue;
-//   Task(this.task, this.taskValue, this.colorValue);
-// }
-
-// ignore: non_constant_identifier_names

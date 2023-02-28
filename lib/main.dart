@@ -1,6 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages, duplicate_import
 // ignore: unused_import
-import 'package:fire_app/dashboard.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:fire_app/login.dart';
 //import 'package:fire_app/login.dart';
 // ignore: unused_import
@@ -16,6 +16,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 late SharedPreferences sharedPref;
 
 void main() async {
+  await AwesomeNotifications().initialize(
+    null,
+    [
+      NotificationChannel(
+          channelKey: 'basic_channel',
+          channelName: 'Basic notification',
+          channelDescription: 'Notification channel for basic tests')
+    ],
+    debug: true,
+  );
   WidgetsFlutterBinding.ensureInitialized();
   sharedPref = await SharedPreferences.getInstance();
   runApp(
@@ -28,8 +38,24 @@ void main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    AwesomeNotifications().isNotificationAllowed().then((isAllowed) {
+      if (!isAllowed) {
+        AwesomeNotifications().requestPermissionToSendNotifications();
+      }
+    });
+    // TODO: implement initState
+    super.initState();
+  }
 
   // This widget is the root of your application.
   @override

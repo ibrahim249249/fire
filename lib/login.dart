@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _LoginformKey = GlobalKey();
   TextEditingController passwordController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
+  bool passToggle = true;
 
   Crud crud = Crud();
   bool isLoading = false;
@@ -31,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       isLoading = true;
       setState(() {});
       var response = await crud.postRequest(linkLogin, {
-        "email": usernameController.text,
+        "username": usernameController.text,
         "password": passwordController.text,
       });
       isLoading = false;
@@ -89,17 +90,20 @@ class _LoginPageState extends State<LoginPage> {
                     child: CircularProgressIndicator(),
                   )
                 : Center(
+                    child: SingleChildScrollView(
                     child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Card(
-                        child: Padding(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Column(
                             children: [
                               Center(
-                                child: FlutterLogo(
-                                  size: 100,
+                                // child: FlutterLogo(
+                                //   size: 100,
+                                // ),
+                                child: const Image(
+                                  image: AssetImage('assets/use_no_woter.png'),
                                 ),
                               ),
                               Form(
@@ -119,11 +123,15 @@ class _LoginPageState extends State<LoginPage> {
                                             child: TextFormField(
                                               controller: usernameController,
                                               decoration: InputDecoration(
+                                                  filled: true,
+                                                  fillColor: Colors.white,
                                                   border: OutlineInputBorder(
                                                       borderRadius:
                                                           BorderRadius.all(
                                                               Radius.circular(
                                                                   10))),
+                                                  prefixIcon: Icon(
+                                                      Icons.email_outlined),
                                                   labelText: 'email',
                                                   hintText:
                                                       'Enter valid username '),
@@ -142,14 +150,28 @@ class _LoginPageState extends State<LoginPage> {
                                               top: 15,
                                               bottom: 0),
                                           child: TextFormField(
+                                            cursorColor: Colors.white,
                                             controller: passwordController,
-                                            obscureText: true,
+                                            obscureText: passToggle,
                                             decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Colors.white,
                                                 border: OutlineInputBorder(
                                                     borderRadius:
                                                         BorderRadius.all(
                                                             Radius.circular(
                                                                 10))),
+                                                prefixIcon: Icon(Icons.lock),
+                                                suffixIcon: InkWell(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      passToggle = !passToggle;
+                                                    });
+                                                  },
+                                                  child: Icon(passToggle
+                                                      ? Icons.visibility
+                                                      : Icons.visibility_off),
+                                                ),
                                                 labelText: 'Password',
                                                 hintText:
                                                     'Enter secure password'),
@@ -210,9 +232,9 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ))));
   }
 }
